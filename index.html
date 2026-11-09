@@ -203,21 +203,21 @@ function eventInfo(){
 function googleCal(){
   const e = eventInfo();
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(e.title) +
-    '&dates=' + stamp(S.fecha, e.start) + '/' + stamp(S.fecha, e.start, 7) +
+    '&dates=' + stamp(S.fecha, e.start) + '/' + stamp(S.fecha, e.start, 1) +
     '&ctz=' + encodeURIComponent(S.tz || '') + '&location=' + encodeURIComponent(e.loc) + '&details=' + encodeURIComponent(e.details);
 }
 function outlookCal(){
   const e = eventInfo();
   return 'https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent&subject=' + encodeURIComponent(e.title) +
-    '&startdt=' + encodeURIComponent(isoLocal(S.fecha, e.start)) + '&enddt=' + encodeURIComponent(isoLocal(S.fecha, e.start, 7)) +
+    '&startdt=' + encodeURIComponent(isoLocal(S.fecha, e.start)) + '&enddt=' + encodeURIComponent(isoLocal(S.fecha, e.start, 1)) +
     '&location=' + encodeURIComponent(e.loc) + '&body=' + encodeURIComponent(e.details);
 }
 function icsText(){
   const e = eventInfo(); const f = s => String(s).replace(/[\\;,]/g, m => '\\' + m).replace(/\n/g,'\\n');
   return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Invitacion//ES','BEGIN:VEVENT','UID:' + stamp(S.fecha, e.start) + '-boda@invitacion',
     'DTSTAMP:' + stamp(new Date().toISOString().slice(0,10), '00:00') + 'Z',
-    'DTSTART' + (S.tz ? ';TZID=' + S.tz : '') + ':' + stamp(S.fecha, e.start), 'DTEND' + (S.tz ? ';TZID=' + S.tz : '') + ':' + stamp(S.fecha, e.start, 7),
-    'SUMMARY:' + f(e.title), 'LOCATION:' + f(e.loc), 'DESCRIPTION:' + f(e.details), 'END:VEVENT','END:VCALENDAR'].join('\r\n');
+    'DTSTART' + (S.tz ? ';TZID=' + S.tz : '') + ':' + stamp(S.fecha, e.start), 'DTEND' + (S.tz ? ';TZID=' + S.tz : '') + ':' + stamp(S.fecha, e.start, 1),
+    'SUMMARY:' + f(e.title), 'LOCATION:' + f(e.loc), 'DESCRIPTION:' + f(e.details), 'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + f('Bugün saat ' + e.start + ' – ' + e.title), 'TRIGGER:-PT' + Math.max(0, (+e.start.split(':')[0])*60 + (+e.start.split(':')[1]) - 720) + 'M', 'END:VALARM', 'END:VEVENT','END:VCALENDAR'].join('\r\n');
 }
 function waUrl(){
   const n = (S.rsvpTel||'').replace(/\D/g,'');
